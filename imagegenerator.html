@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #11110;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            margin-top: -10px;
+            color: #777;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        label {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #800080;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px; /* Added border-radius for a curved button */
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6b006b; /* Darker shade on hover */
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 24px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0; /* Initially hide the image */
+            transition: opacity 0.5s ease; /* Add transition effect */
+        }
+
+        img.loaded {
+            opacity: 1; /* Show the image when loaded */
+        }
+
+        .loading {
+    margin-top: 20px;
+    color: #000000;
+    font-size: 18px;
+    display: none; /* Initially hide the loading text */
+    border-radius: 15px; /* Curved edges */
+    padding: 10px 20px; /* Padding for the loading box */
+    border: 2px solid #800080; /* Border color */
+    animation: colorChange 1.5s infinite alternate; /* Continuous color change animation */
+}
+
+@keyframes colorChange {
+    0% {
+        border-color: purple; /* Initial border color */
+    }
+    100% {
+        border-color: white; /* Alternate border color */
+    }
+}
+        
+    </style>
+</head>
+<body>
+    <h2>IMAGE GENERATOR BY PARTH</h2>
+    <h2>YOO:-</h2>
+    <p id="descriptionOutput"></p>
+
+    <form id="imageForm">
+        <label for="focusInput">Focus:</label>
+        <input type="text" id="focusInput" name="focus" required>
+
+        <button type="button" onclick="generateImage()">Generate Image</button>
+    </form>
+
+    <img id="generatedImage" alt="Generated Image" class="loaded">
+    <p class="loading" id="loadingText">Loading...</p>
+
+    <script>
+        function generateImage() {
+            var focus = document.getElementById("focusInput").value;
+            var descriptionOutput = document.getElementById("descriptionOutput");
+            var generatedImage = document.getElementById("generatedImage");
+            var loadingText = document.getElementById("loadingText");
+
+            loadingText.style.display = "block"; // Show loading text
+            generatedImage.classList.remove("loaded"); // Remove loaded class
+
+            // Replace the following line with your actual image URL pattern
+            var imageUrl = `https://image.pollinations.ai/prompt/${focus} realistic hd 4k`;
+
+            descriptionOutput.innerText = `Description: ${focus}`;
+            generatedImage.src = imageUrl;
+
+            // Wait for the image to load
+            generatedImage.onload = function () {
+                loadingText.style.display = "none"; // Hide loading text
+                generatedImage.classList.add("loaded"); // Add loaded class
+            };
+        }
+    </script>
+</body>
+          </html>
