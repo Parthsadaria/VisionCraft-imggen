@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: 'Playfair Display', serif;
-            background-color: #111; /* Dark background */
-            color: #eee; /* Light text color */
+            background-color: #111;
+            color: #eee;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -31,9 +31,9 @@
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
-            background-color: #222; /* Darker background for form */
+            background-color: #222;
             padding: 20px;
-            border-radius: 10px; /* Rounded corners for the form */
+            border-radius: 10px;
             border: 1px solid #333;
         }
 
@@ -47,10 +47,10 @@
             padding: 8px;
             font-size: 16px;
             margin-bottom: 10px;
-            border: 1px solid #444; /* Dark border */
+            border: 1px solid #444;
             border-radius: 5px;
-            background-color: #333; /* Dark background for input */
-            color: #eee; /* Light text color for input */
+            background-color: #333;
+            color: #eee;
         }
 
         button {
@@ -68,38 +68,73 @@
             background-color: #6b006b;
         }
 
-        img {
-            max-width: 100%;
-            margin-top: 24px;
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
             border: 2px solid #333;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
 
-        img.loaded {
-            opacity: 1;
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+
+        .fullscreen-img {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            cursor: zoom-out;
+        }
+
+        .fullscreen-img img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border: 5px solid #fff;
+            border-radius: 10px;
         }
 
         .loading {
             margin-top: 20px;
-            color: #e0e0e0;
-            font-size: 18px;
-            display: none;
-            border-radius: 15px;
-            padding: 10px 20px;
-            border: 2px solid #800080;
-            animation: colorChange 1.5s infinite alternate;
+            display: none; /* Hide loading by default */
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
-        @keyframes colorChange {
-            0% {
-                border-color: #800080;
-            }
-            100% {
-                border-color: #e0e0e0;
-            }
+        .loading .spinner {
+            border: 8px solid #333;
+            border-top: 8px solid #800080;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px #fff; /* Bright white shadow */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .advanced-options {
@@ -108,7 +143,7 @@
             border-radius: 10px;
             background-color: #333;
             border: 1px solid #444;
-            display: none; /* Hidden by default */
+            display: none;
             flex-direction: column;
             align-items: center;
         }
@@ -145,17 +180,61 @@
             font-size: 16px;
             margin-top: 10px;
         }
+
+        .note {
+            margin-top: 20px;
+            color: #ccc;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        /* Responsive layout for smaller screens */
+        @media (max-width: 600px) {
+            .image-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .title-container {
+            font-family: 'Arial', sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+            margin: 20px;
+            animation: textColorChange 3s infinite;
+            position: relative;
+        }
+
+        /* Color-changing text animation */
+        @keyframes textColorChange {
+            0% {
+                color: royalpurple;
+                text-shadow: 0 0 15px royalpurple;
+            }
+            33% {
+                color: black;
+                text-shadow: 0 0 15px rgb(94, 94, 94);
+            }
+            66% {
+                color: white;
+                text-shadow: 0 0 15px white;
+            }
+            100% {
+                color: royalpurple;
+                text-shadow: 0 0 15px royalpurple;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>IMAGE GENERATOR BY PARTH</h2>
+    <h1 style="font-size: 30px;" class="title-container">VISIONCRAFT BY PARTH SADARIA</h1>
     <p id="descriptionOutput"></p>
 
     <form id="imageForm">
         <label for="focusInput">Focus:</label>
         <input type="text" id="focusInput" name="focus" required placeholder="Enter focus">
 
-        <button type="button" onclick="generateImage()">Generate Image</button>
+        <button type="button" onclick="generateImages()">Generate Images</button>
 
         <button type="button" class="toggle-btn" onclick="toggleAdvancedOptions()">Advanced Options</button>
 
@@ -172,56 +251,101 @@
             <label for="heightInput">Height:</label>
             <input type="number" id="heightInput" name="height" placeholder="Enter height" value="768">
 
-            <label for="seedInput">Seed:</label>
-            <input type="number" id="seedInput" name="seed" placeholder="Enter seed" value="657">
+            <label for="seedInput">Seed Base:</label>
+            <input type="number" id="seedInput" name="seed" placeholder="Enter base seed" value="657">
+
+            <label for="numImagesInput">Number of Images:</label>
+            <input type="number" id="numImagesInput" name="numImages" min="1" max="10" value="1">
         </div>
+
+        <p class="note">Different seeds can generate variations of the prompt. Try different values for unique results!</p>
     </form>
 
-    <img id="generatedImage" alt="Generated Image" class="loaded">
-    <p class="loading" id="loadingText">Loading...</p>
+    <div class="image-container" id="imageContainer"></div>
+
+    <div class="loading" id="loadingText">
+        <div class="spinner"></div>
+    </div>
+
     <p class="error-message" id="errorMessage"></p>
     <a id="directLink" class="direct-link" href="#" target="_blank">View Direct Link</a>
 
     <script>
-        function generateImage() {
+        function generateImages() {
             var focus = document.getElementById("focusInput").value;
             var model = document.getElementById("modelInput").value;
             var width = document.getElementById("widthInput").value;
             var height = document.getElementById("heightInput").value;
-            var seed = document.getElementById("seedInput").value;
+            var seedBase = parseInt(document.getElementById("seedInput").value, 10);
+            var numImages = parseInt(document.getElementById("numImagesInput").value, 10);
             var descriptionOutput = document.getElementById("descriptionOutput");
-            var generatedImage = document.getElementById("generatedImage");
             var loadingText = document.getElementById("loadingText");
             var errorMessage = document.getElementById("errorMessage");
             var directLink = document.getElementById("directLink");
+            var imageContainer = document.getElementById("imageContainer");
 
-            loadingText.style.display = "block";
-            generatedImage.classList.remove("loaded");
+            loadingText.style.display = "flex";
             errorMessage.textContent = "";
             directLink.style.display = "none";
 
-            var imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}`;
-            
+            // Clear previous images
+            imageContainer.innerHTML = "";
+
+            // Generate URLs and create image elements
+            for (let i = 0; i < numImages; i++) {
+                let seed = seedBase + i;
+                let imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}`;
+                
+                let img = document.createElement("img");
+                img.src = imageUrl;
+                img.alt = `Generated Image ${i + 1}`;
+
+                // Set direct link
+                directLink.href = imageUrl;
+
+                img.onload = function () {
+                    if (Array.from(imageContainer.children).every(img => img.complete)) {
+                        loadingText.style.display = "none";
+                    }
+                };
+
+                img.onerror = function () {
+                    loadingText.style.display = "none";
+                    errorMessage.textContent = "Failed to load one or more images. Please try again.";
+                    directLink.style.display = "block";
+                };
+
+                // Add click event for maximizing image
+                img.addEventListener("click", function () {
+                    maximizeImage(img);
+                });
+
+                imageContainer.appendChild(img);
+            }
+
             descriptionOutput.innerText = `Description: ${focus}`;
-            generatedImage.src = imageUrl;
-            directLink.href = imageUrl;
-
-            generatedImage.onload = function () {
-                loadingText.style.display = "none";
-                generatedImage.classList.add("loaded");
-            };
-
-            generatedImage.onerror = function () {
-                loadingText.style.display = "none";
-                errorMessage.textContent = "Failed to load image. Please try again.";
-                directLink.style.display = "inline";
-            };
         }
 
         function toggleAdvancedOptions() {
             var advancedOptions = document.getElementById("advancedOptions");
-            var display = advancedOptions.style.display === "none" ? "flex" : "none";
-            advancedOptions.style.display = display;
+            advancedOptions.style.display = advancedOptions.style.display === "none" ? "flex" : "none";
+        }
+
+        function maximizeImage(image) {
+            var fullscreenDiv = document.createElement("div");
+            fullscreenDiv.classList.add("fullscreen-img");
+
+            var fullscreenImg = document.createElement("img");
+            fullscreenImg.src = image.src;
+            fullscreenImg.alt = image.alt;
+
+            fullscreenDiv.appendChild(fullscreenImg);
+
+            fullscreenDiv.addEventListener("click", function () {
+                fullscreenDiv.remove();
+            });
+
+            document.body.appendChild(fullscreenDiv);
         }
     </script>
 </body>
