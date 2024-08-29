@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-1.0-blue)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
-
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://www.webintoapp.com/download/apk/423111/app-release.apk)
 Welcome to **VisionCraft by Parth**, an advanced image generator that uses cutting-edge AI models to create stunning images based on your prompts. 
 
 ## ✨ Features
