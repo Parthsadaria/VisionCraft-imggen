@@ -27,7 +27,7 @@ Welcome to **VisionCraft by Parth**, an advanced image generator that uses cutti
 - **Seed**: Random
 - **Number of Images**: 4
 
-
+## BIG THANKS TO POLLINATION.AI at www.pollination.ai
 ## 🤝 Contributing
 
 Feel free to open issues or pull requests for improvements. Contributions are welcome!
