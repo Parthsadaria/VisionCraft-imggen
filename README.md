@@ -10,7 +10,7 @@ Welcome to **VisionCraft by Parth**, an advanced image generator that uses cutti
 [![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://www.webintoapp.com/download/apk/423111/app-release.apk)
 
 ## ✨ Features
-- **Give it a try**:- https://parthsadaria.github.io/visioncraft-imggen
+- **Give it a try**:-https://parthsadaria.github.io/VisionCraft-imggen/
 - **🖼️ Prompt-Based Image Generation**: Enter a focus keyword and generate images with stunning quality.
 - **⚙️ Advanced Options**:
   - **🚀 Model Selection**: Choose between `Turbo` and `Flux` models.
