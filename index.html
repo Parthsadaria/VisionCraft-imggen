@@ -234,7 +234,7 @@
 
     <form id="imageForm">
         <label for="focusInput">Prompt:-</label>
-        <input type="text" id="focusInput" name="focus" required placeholder="Enter Prompt">
+        <input type="text" id="focusInput" name="focus" required placeholder="Enter Prompt"> 
 
         <button type="button" onclick="generateImages()" style="background-color: #ffd700; color: #000;">Pollinate!</button>
 
@@ -246,10 +246,29 @@
                 <option value="flux">Flux</option>
                 <option value="">Turbo</option>
             </select>
-
+            <label for="styleInput">Style:</label>
+            <select id="styleInput" name="style">
+                <option value="">Default</option>
+                <option value="realism">Realism</option>
+                <option value="anime">Anime</option>
+                <option value="art">Art</option>
+                <option value="disney">Disney</option>
+                <option value="ps2">PS2</option>
+                <option value="vintage">Vintage</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="steampunk">Steampunk</option>
+                <option value="surrealism">Surrealism</option>
+                <option value="watercolor">Watercolor</option>
+                <option value="gothic">Gothic</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="popart">Pop Art</option>
+                <option value="impressionism">Impressionism</option>
+                <!-- Add more styles as needed -->
+            </select>            
             <label for="widthInput">Width:</label>
             <input type="number" id="widthInput" name="width" placeholder="Enter width" value="768">
-
+            
             <label for="heightInput">Height:</label>
             <input type="number" id="heightInput" name="height" placeholder="Enter height" value="768">
 
@@ -273,61 +292,86 @@
     <a id="directLink" class="direct-link" href="#" target="_blank">View Direct Link</a>
 
     <script>
- function generateImages() {
-            var focus = document.getElementById("focusInput").value;
-            var model = document.getElementById("modelInput").value;
-            var width = document.getElementById("widthInput").value;
-            var height = document.getElementById("heightInput").value;
-            var seedBase = parseInt(document.getElementById("seedInput").value, 10);
-            var numImages = parseInt(document.getElementById("numImagesInput").value, 10);
-            var descriptionOutput = document.getElementById("descriptionOutput");
-            var loadingText = document.getElementById("loadingText");
-            var errorMessage = document.getElementById("errorMessage");
-            var directLink = document.getElementById("directLink");
-            var imageContainer = document.getElementById("imageContainer");
+function generateImages() {
+    var focus = document.getElementById("focusInput").value;
+    var style = document.getElementById("styleInput").value;
+    var model = document.getElementById("modelInput").value;
+    var width = document.getElementById("widthInput").value;
+    var height = document.getElementById("heightInput").value;
+    var seedBase = parseInt(document.getElementById("seedInput").value, 10);
+    var numImages = parseInt(document.getElementById("numImagesInput").value, 10);
+    var descriptionOutput = document.getElementById("descriptionOutput");
+    var loadingText = document.getElementById("loadingText");
+    var errorMessage = document.getElementById("errorMessage");
+    var directLink = document.getElementById("directLink");
+    var imageContainer = document.getElementById("imageContainer");
 
-            loadingText.style.display = "flex";
-            errorMessage.textContent = "";
-            directLink.style.display = "none";
+    loadingText.style.display = "flex";
+    errorMessage.textContent = "";
+    directLink.style.display = "none";
 
-            // Clear previous images
-            imageContainer.innerHTML = "";
+    // Clear previous images
+    imageContainer.innerHTML = "";
 
-            // Generate URLs and create image elements
-            for (let i = 0; i < numImages; i++) {
-                let seed = seedBase + i;
-                let imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=True`;
-                
-                let img = document.createElement("img");
-                img.src = imageUrl;
-                img.alt = `Generated Image ${i + 1}`;
+    // Define detailed descriptions for each style
+    var styleDescriptions = {
+        "realism": "realistic, hd, 4k, hyperrealism, great details, high quality photo, 8K",
+        "anime": "anime style, vibrant colors, cell-shading, dynamic lighting, high contrast",
+        "art": "artistic, abstract, brush strokes, surrealism, unique textures, vibrant hues",
+        "disney": "disney style, cartoonish, bright colors, character-focused, clean lines",
+        "ps2": "retro, pixelated, low-poly, nostalgic, old school, PlayStation 2 graphics",
+        "vintage": "vintage style, sepia tones, aged effect, retro, classic, old-fashioned",
+        "cyberpunk": "cyberpunk, neon lights, futuristic, dystopian, high-tech, dark, edgy",
+        "fantasy": "fantasy world, mythical creatures, magical, ethereal, otherworldly",
+        "steampunk": "steampunk, Victorian era, gears, industrial, brass, mechanical",
+        "surrealism": "surrealism, dream-like, bizarre, imaginative, abstract, symbolic",
+        "watercolor": "watercolor painting, soft brush strokes, pastel colors, fluid, artistic",
+        "gothic": "gothic style, dark, moody, medieval, architecture, eerie, dramatic",
+        "minimalist": "minimalist, simple, clean lines, monochrome, modern, understated",
+        "popart": "pop art, bold colors, comic style, graphic, vibrant, 1960s, retro",
+        "impressionism": "impressionism, soft focus, light and color, painterly, brush strokes"
+    };
 
-                // Set direct link
-                directLink.href = imageUrl;
+    // Get the detailed description based on the selected style
+    var detailedDescription = styleDescriptions[style] || "";
 
-                img.onload = function () {
-                    if (Array.from(imageContainer.children).every(img => img.complete)) {
-                        loadingText.style.display = "none";
-                    }
-                };
+    // Append style to the prompt if selected
+    var prompt = style ? `${focus}, ${detailedDescription}` : focus;
 
-                img.onerror = function () {
-                    loadingText.style.display = "none";
-                    errorMessage.textContent = "Failed to load one or more images. Please try again.";
-                    directLink.style.display = "block";
-                };
+    // Generate URLs and create image elements
+    for (let i = 0; i < numImages; i++) {
+        let seed = seedBase + i;
+        let imageUrl = `https://pollinations.ai/p/${prompt}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=True`;
+        
+        let img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = `Generated Image ${i + 1}`;
 
-                // Add click event for maximizing image
-                img.addEventListener("click", function () {
-                    maximizeImage(img);
-                });
+        // Set direct link
+        directLink.href = imageUrl;
 
-                imageContainer.appendChild(img);
+        img.onload = function () {
+            if (Array.from(imageContainer.children).every(img => img.complete)) {
+                loadingText.style.display = "none";
             }
+        };
 
-            descriptionOutput.innerText = `Description: ${focus}`;
-        }
+        img.onerror = function () {
+            loadingText.style.display = "none";
+            errorMessage.textContent = "Failed to load one or more images. Please try again.";
+            directLink.style.display = "block";
+        };
 
+        // Add click event for maximizing image
+        img.addEventListener("click", function () {
+            maximizeImage(img);
+        });
+
+        imageContainer.appendChild(img);
+    }
+
+    descriptionOutput.innerText = `Description: ${prompt}`;
+}
         function toggleAdvancedOptions() {
             var advancedOptions = document.getElementById("advancedOptions");
             advancedOptions.style.display = advancedOptions.style.display === "none" ? "flex" : "none";
