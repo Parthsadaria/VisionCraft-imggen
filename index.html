@@ -272,98 +272,85 @@
 
     <script>
         function generateImages() {
-    var focus = document.getElementById("focusInput").value;
-    var model = document.getElementById("modelInput").value;
-    var width = document.getElementById("widthInput").value;
-    var height = document.getElementById("heightInput").value;
-    var seedBase = parseInt(document.getElementById("seedInput").value, 10);
-    var numImages = parseInt(document.getElementById("numImagesInput").value, 10);
-    var descriptionOutput = document.getElementById("descriptionOutput");
-    var loadingText = document.getElementById("loadingText");
-    var errorMessage = document.getElementById("errorMessage");
-    var directLink = document.getElementById("directLink");
-    var imageContainer = document.getElementById("imageContainer");
+            var focus = document.getElementById("focusInput").value;
+            var model = document.getElementById("modelInput").value;
+            var width = document.getElementById("widthInput").value;
+            var height = document.getElementById("heightInput").value;
+            var seedBase = parseInt(document.getElementById("seedInput").value, 10);
+            var numImages = parseInt(document.getElementById("numImagesInput").value, 10);
+            var descriptionOutput = document.getElementById("descriptionOutput");
+            var loadingText = document.getElementById("loadingText");
+            var errorMessage = document.getElementById("errorMessage");
+            var directLink = document.getElementById("directLink");
+            var imageContainer = document.getElementById("imageContainer");
 
-    loadingText.style.display = "flex";
-    errorMessage.textContent = "";
-    directLink.style.display = "none";
+            loadingText.style.display = "flex";
+            errorMessage.textContent = "";
+            directLink.style.display = "none";
 
-    // Clear previous images
-    imageContainer.innerHTML = "";
+            // Clear previous images
+            imageContainer.innerHTML = "";
 
-    let promises = [];
+            for (var i = 0; i < numImages; i++) {
+                var seed = seedBase + i; // Generate unique seeds based on base seed
 
-    for (let i = 0; i < numImages; i++) {
-        let seed = seedBase + i;
-        let imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=True`;
+                let imageUrl = `https://api.allorigins.win/raw?url=https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=True`;
 
-        // Fetch the image as a Blob and create an img element
-        let promise = fetch(imageUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to load image");
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                let img = document.createElement("img");
-                img.src = URL.createObjectURL(blob);
-                img.alt = `Generated Image ${i + 1}`;
 
-                img.onload = function () {
-                    URL.revokeObjectURL(img.src); // Free up memory
-                };
+                fetch(imageUrl)
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.blob();
+                        } else {
+                            throw new Error("Image generation failed");
+                        }
+                    })
+                    .then(function(blob) {
+                        var img = document.createElement("img");
+                        img.src = URL.createObjectURL(blob);
+                        img.alt = focus;
+                        img.onclick = function() {
+                            showFullScreen(img.src);
+                        };
+                        imageContainer.appendChild(img);
 
-                img.onerror = function () {
-                    errorMessage.textContent = "Failed to load one or more images. Please try again.";
-                    directLink.style.display = "block";
-                };
-
-                img.addEventListener("click", function () {
-                    maximizeImage(img);
-                });
-
-                imageContainer.appendChild(img);
-            })
-            .catch(error => {
-                errorMessage.textContent = error.message;
-                directLink.style.display = "block";
-            });
-
-        promises.push(promise);
-    }
-
-    // Wait for all images to load
-    Promise.all(promises).then(() => {
-        loadingText.style.display = "none";
-    });
-
-    descriptionOutput.innerText = `Description: ${focus}`;
-}
-
-        function toggleAdvancedOptions() {
-            var advancedOptions = document.getElementById("advancedOptions");
-            advancedOptions.style.display = advancedOptions.style.display === "none" ? "flex" : "none";
+                        // Show direct link to the first image
+                        if (i === 0) {
+                            directLink.href = imageUrl;
+                            directLink.style.display = "block";
+                        }
+                    })
+                    .catch(function(error) {
+                        errorMessage.textContent = error.message;
+                    })
+                    .finally(function() {
+                        loadingText.style.display = "none";
+                    });
+            }
         }
 
-        function maximizeImage(image) {
+        function showFullScreen(src) {
             var fullscreenDiv = document.createElement("div");
-            fullscreenDiv.classList.add("fullscreen-img");
+            fullscreenDiv.className = "fullscreen-img";
+            fullscreenDiv.onclick = function() {
+                document.body.removeChild(fullscreenDiv);
+            };
 
-            var fullscreenImg = document.createElement("img");
-            fullscreenImg.src = image.src;
-            fullscreenImg.alt = image.alt;
-
-            fullscreenDiv.appendChild(fullscreenImg);
-
-            fullscreenDiv.addEventListener("click", function () {
-                fullscreenDiv.remove();
-            });
+            var img = document.createElement("img");
+            img.src = src;
+            fullscreenDiv.appendChild(img);
 
             document.body.appendChild(fullscreenDiv);
         }
+
+        function toggleAdvancedOptions() {
+            var advancedOptions = document.getElementById("advancedOptions");
+            if (advancedOptions.style.display === "none") {
+                advancedOptions.style.display = "flex";
+            } else {
+                advancedOptions.style.display = "none";
+            }
+        }
     </script>
-    <center>
-    <h3>Made Using Pollination.ai ;)</h3>
 </body>
 </html>
