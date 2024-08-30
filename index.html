@@ -294,7 +294,7 @@
             // Generate URLs and create image elements
             for (let i = 0; i < numImages; i++) {
                 let seed = seedBase + i;
-                let imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}`;
+                let imageUrl = `https://pollinations.ai/p/${focus}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=True`;
                 
                 let img = document.createElement("img");
                 img.src = imageUrl;
